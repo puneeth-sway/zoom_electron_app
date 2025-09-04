@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pure Zoom Electron</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+
+<body>
+  <div id="app">
+    <!-- Home Screen -->
+    <div id="home-screen" class="screen active">
+      <div class="container">
+        <div class="logo">
+          <i class="fas fa-video"></i>
+          <h1>Pure Zoom Electron</h1>
+        </div>
+
+        <div class="join-section">
+          <h2>Join or Create Meeting</h2>
+          <div class="input-group">
+            <input type="text" id="meeting-id" placeholder="Enter Meeting ID" maxlength="10">
+            <input type="text" id="user-name" placeholder="Your Name" maxlength="20">
+            <select id="user-role">
+              <option value="1">Presenter</option>
+              <option value="0">Audience</option>
+            </select>
+          </div>
+
+          <div class="button-group">
+            <button id="join-btn" class="btn btn-primary">
+              <i class="fas fa-sign-in-alt"></i>
+              Join Meeting
+            </button>
+            <button id="create-btn" class="btn btn-secondary">
+              <i class="fas fa-plus"></i>
+              Create Meeting
+            </button>
+          </div>
+        </div>
+
+        <div class="features">
+          <div class="feature">
+            <i class="fas fa-users"></i>
+            <span>Multi-participant video calls</span>
+          </div>
+          <div class="feature">
+            <i class="fas fa-shield-alt"></i>
+            <span>Secure meetings</span>
+          </div>
+          <div class="feature">
+            <i class="fas fa-desktop"></i>
+            <span>Cross-platform support</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Video Call Screen -->
+    <div id="video-screen" class="screen">
+      <div class="video-header">
+        <div class="meeting-info">
+          <h3 id="meeting-title">Meeting: <span id="meeting-id-display"></span></h3>
+          <p id="participant-count">0 participants</p>
+          <p id="user-role-display" class="user-role"></p>
+        </div>
+        <div class="header-controls">
+          <button id="minimize-btn" class="btn-icon">
+            <i class="fas fa-minus"></i>
+          </button>
+          <button id="maximize-btn" class="btn-icon">
+            <i class="fas fa-expand"></i>
+          </button>
+          <button id="close-btn" class="btn-icon btn-danger">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="video-container" id="video-container">
+        <!-- Video elements will be dynamically added here -->
+      </div>
+
+      <div class="video-controls">
+        <div class="control-group">
+          <button id="mute-audio" class="btn-control">
+            <i class="fas fa-microphone"></i>
+          </button>
+          <button id="mute-video" class="btn-control">
+            <i class="fas fa-video"></i>
+          </button>
+        </div>
+
+        <div class="control-group">
+          <button id="screen-share" class="btn-control">
+            <i class="fas fa-desktop"></i>
+          </button>
+          <button id="chat-btn" class="btn-control">
+            <i class="fas fa-comments"></i>
+          </button>
+        </div>
+
+        <!-- Background Controls (Presenter Only) -->
+        <div class="control-group" id="background-controls" style="display: none;">
+          <button id="background-btn" class="btn-control">
+            <i class="fas fa-image"></i>
+          </button>
+          <button id="blur-btn" class="btn-control">
+            <i class="fas fa-eye-slash"></i>
+          </button>
+          <button id="remove-bg-btn" class="btn-control">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+
+        <div class="control-group">
+          <button id="leave-meeting" class="btn-control btn-danger">
+            <i class="fas fa-phone-slash"></i>
+            Leave
+          </button>
+        </div>
+      </div>
+
+      <!-- Chat Panel -->
+      <div id="chat-panel" class="chat-panel hidden">
+        <div class="chat-header">
+          <h4>Chat</h4>
+          <button id="close-chat" class="btn-icon">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="chat-messages" id="chat-messages">
+          <!-- Chat messages will be added here -->
+        </div>
+        <div class="chat-input">
+          <input type="text" id="chat-input" placeholder="Type a message...">
+          <button id="send-chat" class="btn-icon">
+            <i class="fas fa-paper-plane"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Background Selection Modal (Presenter Only) -->
+      <div id="background-modal" class="background-modal hidden">
+        <div class="background-modal-content">
+          <div class="background-modal-header">
+            <h4>Choose Background</h4>
+            <button id="close-bg-modal" class="btn-icon">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+          <div class="background-options">
+            <div class="background-option" data-type="none">
+              <div class="bg-preview no-bg">
+                <i class="fas fa-user"></i>
+              </div>
+              <span>No Background</span>
+            </div>
+            <div class="background-option" data-type="blur">
+              <div class="bg-preview blur-bg">
+                <i class="fas fa-eye-slash"></i>
+              </div>
+              <span>Blur</span>
+            </div>
+            <div class="background-option" data-type="black">
+              <div class="bg-preview solid-bg" style="background: #000000;">
+                <i class="fas fa-square"></i>
+              </div>
+              <span>Black</span>
+            </div>
+            <div class="background-option" data-type="green">
+              <div class="bg-preview solid-bg" style="background: #00FF00;">
+                <i class="fas fa-square"></i>
+              </div>
+              <span>Green Screen</span>
+            </div>
+            <div class="background-option" data-type="blue">
+              <div class="bg-preview solid-bg" style="background: #0066FF;">
+                <i class="fas fa-square"></i>
+              </div>
+              <span>Blue Screen</span>
+            </div>
+            <div class="background-option" data-type="image">
+              <div class="bg-preview image-bg">
+                <i class="fas fa-image"></i>
+              </div>
+              <span>Custom Image</span>
+              <input type="file" id="bg-image-input" accept="image/*" style="display: none;">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="screen">
+      <div class="loading-content">
+        <div class="spinner"></div>
+        <h3>Joining Meeting...</h3>
+        <p>Please wait while we connect you</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+
+</html>

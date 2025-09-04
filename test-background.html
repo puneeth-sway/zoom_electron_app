@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Background Change Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #1a1a1a;
+      color: white;
+      padding: 20px;
+    }
+
+    .test-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .video-container {
+      position: relative;
+      width: 400px;
+      height: 300px;
+      margin: 20px 0;
+      border: 2px solid #667eea;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .video-container video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: all 0.3s ease;
+    }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+      margin: 20px 0;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .btn:hover {
+      background: #5a6fd8;
+    }
+
+    .btn.active {
+      background: #4caf50;
+    }
+
+    .status {
+      margin: 20px 0;
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 5px;
+    }
+
+    /* Background effect indicators */
+    .video-container.blur-effect::after {
+      content: 'BLUR';
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: linear-gradient(45deg, #667eea, #764ba2);
+      color: white;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 0.7rem;
+      font-weight: bold;
+    }
+
+    .video-container.image-effect::after {
+      content: 'IMAGE';
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: linear-gradient(45deg, #f093fb, #f5576c);
+      color: white;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 0.7rem;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="test-container">
+    <h1>🎨 Background Change Test</h1>
+    <p>This tests the background change functionality in isolation.</p>
+
+    <div class="video-container" id="video-container">
+      <video id="test-video" autoplay muted loop>
+        <source
+          src="data:video/mp4;base64,AAAAIGZ0eXBpc29tAAACAGlzb21pc28yYXZjMW1wNDEAAAAIZnJlZQAAAGhtZGF0AAACmwYF//+p3EXpvebZSLeWLNgg2SPu73gyNjQgLSBjb3JlIDE0OCByMjkyMSA3YzQ2YjQxIC0gSC4yNjQvTVBFRy00IEFWQyBjb2RlYyAtIENvcHlsZWZ0IDIwMDMtMjAxNSAtIGh0dHA6Ly93d3cudmlkZW9sYW4ub3JnL3gyNjQuaHRtbCAtIG9wdGlvbnM6IGNhYmFjPTEgcmVmPTMgZGVibG9jaz0xOjA6MCBhbmFseXNlPTB4MzoweDExMyBtZT1oZXggc3VibWU9NyBwc3k9MSBwc3lfcmQ9MS4wMDowLjAwIG1peGVkPTAgYWVTeT0xIGNocm9tYV9xdWFudD0wIGRlZmF1bHQ9MQ=="
+          type="video/mp4">
+      </video>
+    </div>
+
+    <div class="controls">
+      <button class="btn" id="blur-btn">Apply Blur</button>
+      <button class="btn" id="image-btn">Apply Image</button>
+      <button class="btn" id="remove-btn">Remove Background</button>
+    </div>
+
+    <div class="status" id="status">
+      Status: No background effect applied
+    </div>
+
+    <h3>Test Instructions:</h3>
+    <ol>
+      <li>Click "Apply Blur" to test blur effect</li>
+      <li>Click "Apply Image" to test image background</li>
+      <li>Click "Remove Background" to remove effects</li>
+      <li>Check console for detailed logs</li>
+    </ol>
+  </div>
+
+  <script>
+    class BackgroundTester {
+      constructor() {
+        this.currentBackground = 'none';
+        this.videoContainer = document.getElementById('video-container');
+        this.video = document.getElementById('test-video');
+        this.status = document.getElementById('status');
+
+        this.initializeEventListeners();
+        this.updateStatus();
+      }
+
+      initializeEventListeners() {
+        document.getElementById('blur-btn').addEventListener('click', () => {
+          this.applyBlurBackground();
+        });
+
+        document.getElementById('image-btn').addEventListener('click', () => {
+          this.applyImageBackground();
+        });
+
+        document.getElementById('remove-btn').addEventListener('click', () => {
+          this.removeBackground();
+        });
+      }
+
+      applyBlurBackground() {
+        console.log('🎨 Applying blur background');
+
+        // Remove existing effects
+        this.video.style.filter = '';
+        this.video.style.backgroundImage = '';
+        this.videoContainer.classList.remove('blur-effect', 'image-effect');
+
+        // Apply blur effect
+        this.video.style.filter = 'blur(8px)';
+        this.videoContainer.classList.add('blur-effect');
+
+        this.currentBackground = 'blur';
+        this.updateStatus();
+        console.log('✅ Blur background applied');
+      }
+
+      applyImageBackground() {
+        console.log('🎨 Applying image background');
+
+        // Remove existing effects
+        this.video.style.filter = '';
+        this.video.style.backgroundImage = '';
+        this.videoContainer.classList.remove('blur-effect', 'image-effect');
+
+        // Apply image background (using a sample image)
+        const sampleImage = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjNjY3ZWU2Ii8+CiAgPGNpcmNsZSBjeD0iMjAwIiBjeT0iMTUwIiByPSI4MCIgZmlsbD0iI2YwOTNmYiIvPgogIDx0ZXh0IHg9IjIwMCIgeT0iMjAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJ3aGl0ZSIgZm9udC1zaXplPSIyNCI+U2FtcGxlPC90ZXh0Pgo8L3N2Zz4=';
+
+        this.video.style.backgroundImage = `url(${sampleImage})`;
+        this.video.style.backgroundSize = 'cover';
+        this.video.style.backgroundPosition = 'center';
+        this.videoContainer.classList.add('image-effect');
+
+        this.currentBackground = 'image';
+        this.updateStatus();
+        console.log('✅ Image background applied');
+      }
+
+      removeBackground() {
+        console.log('🎨 Removing background');
+
+        // Remove all effects
+        this.video.style.filter = '';
+        this.video.style.backgroundImage = '';
+        this.video.style.backgroundSize = '';
+        this.video.style.backgroundPosition = '';
+        this.videoContainer.classList.remove('blur-effect', 'image-effect');
+
+        this.currentBackground = 'none';
+        this.updateStatus();
+        console.log('✅ Background removed');
+      }
+
+      updateStatus() {
+        const statusText = `Status: ${this.currentBackground === 'none' ? 'No background effect' :
+          this.currentBackground === 'blur' ? 'Blur effect applied' : 'Image background applied'}`;
+        this.status.textContent = statusText;
+
+        // Update button states
+        document.getElementById('blur-btn').classList.toggle('active', this.currentBackground === 'blur');
+        document.getElementById('image-btn').classList.toggle('active', this.currentBackground === 'image');
+        document.getElementById('remove-btn').classList.toggle('active', this.currentBackground === 'none');
+      }
+    }
+
+    // Initialize when page loads
+    document.addEventListener('DOMContentLoaded', () => {
+      new BackgroundTester();
+    });
+  </script>
+</body>
+
+</html>
